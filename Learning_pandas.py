@@ -5,7 +5,7 @@ import seaborn as sns
 
 # what is a dataframe?
 
-# honestly, a dataframe is just pandas lengo for a data table.
+# honestly, a dataframe is just pandas lengu for a data table.
 # it calls columns Series and unique IDs Indexes - important to know.
 
 #-----------
@@ -93,5 +93,19 @@ print(sorted_df.head(5))
 print("-----------------------------------")
 
 # How to group data
-grouped_df = df.groupby('species').mean() # groups the data by species and calculates the mean of each group
-print(grouped_df)
+grouped_df_mean = df.groupby('species').mean() # groups the data by species and calculates the mean of each group
+grouped_df_median = df.groupby('species').median() # groups the data by species and calculates the median of each group
+grouped_df_sum = df.groupby('species').sum() # groups the data by species and calculates the sum of each group
+grouped_df_count = df.groupby('species').count() # groups the data by species and calculates the sum of each group
+
+print('grouped mean')
+print(grouped_df_mean)
+print("-------------")
+print('grouped median')
+print(grouped_df_median)
+print("-------------")
+print('grouped sum')
+print(grouped_df_sum)
+print("-------------")
+print('grouped count')
+print(grouped_df_count)
