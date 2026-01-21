@@ -109,3 +109,73 @@ print(grouped_df_sum)
 print("-------------")
 print('grouped count')
 print(grouped_df_count)
+
+print("-----------------------------------")
+
+# How to filter data
+
+fitered_df = df[(df['petal_length'] > 1.3)] # filters the data where petal_length is greater than 1.3
+print(fitered_df.head(5))
+
+# there is a better, more sql style way of filtering data using the query method
+fitered_df_query = df.query('petal_length > 1.3') # filters the data where petal_length is greater than 1.3
+print(fitered_df_query.head(5))
+
+# i prefer it becasue im more comfterable with sql syntax
+
+print("-----------------------------------")
+
+# How To Manipulate Data
+
+# groups the data by petal_width and counts the number of occurrences of each petal_width
+grouped_data = df.groupby('petal_width').agg({'petal_width': 'count'})
+print(grouped_data)
+
+print("-----------------------------------")
+
+# Now lets do some Practice Exercises
+
+# i will include a dataset in the github repo, its called weather_data.csv 
+
+# what you need to find:
+# 1. find differences between average max temprateure per day and record max temprature
+# 2. sort hottest months of the year by max AVG temprature
+
+# Load the dataset
+
+# read the data
+data = pd.read_csv('weather_data.csv')
+print('head:')
+print(data.head(5)) # this command shows the first 5 rows of the dataframe
+print('tail:')
+print(data.tail(5)) # this command shows the last 5 rows of the dataframe
+print('info:')
+print(data.info()) # this command shows a summary of the dataframe
+print('shape:')
+print(data.shape) # this command shows the number of rows and columns in the dataframe
+print('Dtypes:')
+print(data.dtypes) # this command shows the data types of each column
+print('describe:')
+print(data.describe()) # this command shows basic statistics of numerical columns
+
+# ----------------
+# 1) find differences between average max temprateure per day and record max temprature
+
+# create a new column and substract record from average
+# print out sorted df ascending = False
+
+data['temp_diff'] = data['record_max_temp'] - data['average_max_temp']
+print(data.sort_values(by='temp_diff', ascending=False).head(5))
+
+
+# -----------------
+# 2) sort hottest months of the year by max AVG temprature
+
+# extract month from date column
+# group data by month and calculate mean of average_max_temp
+# sort the result by average_max_temp descending
+# Force the column to be a datetime object
+data['date'] = pd.to_datetime(data['date'], format = 'ISO8601')
+group_by_month = data.groupby(data.date.dt.month)['average_max_temp'].max()
+sort_by_month =group_by_month.sort_values(ascending=False)
+print(sort_by_month)
