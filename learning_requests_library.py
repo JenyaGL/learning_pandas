@@ -58,6 +58,7 @@ print("--------------------")
 
 # Now lets pull data from API and force it into a clean table using pandas.
 import pandas as pd
+import numpy as np
 
 pandas_responce = requests.get("https://jsonplaceholder.typicode.com/users")
 
@@ -85,7 +86,53 @@ print(users_data.head())
 
 
 
+print("--------------------")
+
+# Automations and reusable functions!
+
+# The Goal: Write code that doesn't crash when the data is "dirty" (and it always is).
+# lets pull data from API, push it though a cleaning and normalization funtion and store it in a dataframe
+
+# lets pull first
+sw_data_response = requests.get("https://swapi.dev/api/people/")
+if sw_data_response.status_code == 200:
+    print("Success!")
+else:
+    print("Failed to retrieve data - ", sw_data_response.status_code)
+
+# parse the data into json format
+sw_data = sw_data_response.json()
+
+# now we can define a function to clean and normalize the data
+
+sw_data_df = pd.json_normalize(sw_data['results'])
+
+print(sw_data_df.info())
+
+print(sw_data_df.head())
+
+# as you notice here, there are many columns with different types of data but hte data type of all columns is an object
+# it prevents us from analyzing the numerical data and producing insights so we need to build a TRANSFORM layer
+# we can and (should) create a funtion specifically for this dataset in order to maintain a continous data ingestion and 
+# consumption of our systems, it goes like this:
 
 
+# 1. first i need to make sure that there are no null values.
+# 2. then i will clean all string values from wronf spaces and capital letters
+# 2. then i want to change al numerical column to numerical data types
+# 3. place it all in a main funtion and run the data through it.
 
+def normalize_numeric_values(value):
+
+
+    # 1. Safety Check: If it's already a number, return it (its a general step)
+    if isinstance(value,(int,float)):
+        return value
+    
+    # 2. normalizing nul values to be the same in the data 
+    if value in ['unknown','n/a','none']:
+        return np.nan
+    
+    # 3. 
+    value =
 
