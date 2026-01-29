@@ -179,3 +179,106 @@ data['date'] = pd.to_datetime(data['date'], format = 'ISO8601')
 group_by_month = data.groupby(data.date.dt.month)['average_max_temp'].max()
 sort_by_month =group_by_month.sort_values(ascending=False)
 print(sort_by_month)
+
+print("-----------------------------------")
+print("diamonds data analysis:")
+print('')
+# diamond data
+diamonds_data = pd.read_csv('diamonds.csv')
+
+# Step 2: The Tasks Write the code to do the following:
+
+# Inspect: Print the shape of the data.
+# Select: Create a new variable mini_df that contains only the cut and price columns.
+# Rename: Rename color to haze.
+# The "Trap": Print df.dtypes. Notice that price is an object (string).
+# Fix: Convert the price column to a float using: df['price'] = df['price'].astype(float)
+# Verify: Print df.dtypes again to prove it changed.
+
+# inspect
+print(diamonds_data.shape)
+print(diamonds_data.info())
+print(diamonds_data.describe())
+
+# how t osee the data:
+print(diamonds_data.head())
+
+# select
+mini_df = diamonds_data[['cut','price']]
+print(mini_df.dtypes) # Its an int not object
+mini_df['price'] = mini_df['price'].astype(float)
+print(mini_df.dtypes)
+
+print("-------------")
+
+# The "WHERE" and "GROUP BY" Clauses
+
+
+    # Filter: Create a new variable filtered_df that contains only rows where cut is Ideal.
+    # Group: Create a new variable grouped_df that groups filtered_df by cut and calculates the mean
+
+# WHERE(filter)
+
+# There are 2 methods for filtering data using pandas
+# Method 1:
+filtered_df = diamonds_data[diamonds_data['price'] > 10000]
+
+# Method 2:
+filtered_df_query = diamonds_data.query('price > 10000')
+
+# both methods give the same result but i think method 2 is more readable since its more sql like
+print(filtered_df.head(2))
+print(filtered_df_query.head(2))
+
+
+# GROUP BY
+
+# if we need to group by a category of values and calculate metrics
+# Common Functions: .sum(), .mean(), .count(), .max(), .min().
+
+groupd_avg_cut=diamonds_data.groupby('cut')['price'].mean()
+
+print(groupd_avg_cut)
+
+print("----")
+
+# Feature Engineering: Create a column price_per_carat. Formula: price / carat.
+
+# Complex Filtering (The Parentheses Drill):
+    # Find diamonds that are "Ideal" cut AND cost less than $1,000.
+    # Constraint: You must use the Standard Syntax (parentheses () and &), not .query().
+    # Aggregation: Group by clarity (the quality of the stone).
+    # Calculate the Average price_per_carat for each clarity grade.
+    # Sorting: Sort the result to see which clarity grade is the most expensive per carat on average.
+
+diamonds_data['price_per_carat']= diamonds_data['price'] / diamonds_data['carat'] # adittional column
+
+ideal_stones = diamonds_data[(diamonds_data['price_per_carat'] < 1000) & (diamonds_data['cut']=='Ideal')] # filtered data
+
+diamonds_clarity = ideal_stones.groupby('clarity')['price'].mean().sort_values(ascending=False) # grouped data
+
+print(diamonds_clarity)
+
+print("----")
+
+# The "VLOOKUP" (Merging Data)
+
+# Connect two separate datasets based on a shared key.
+# # The Concept: In Excel, you use VLOOKUP or XLOOKUP.
+# In SQL, you use JOIN.
+# In Pandas, you use pd.merge().
+
+# -----------
+# The Syntax:
+# new_df = pd.merge(left_table, right_table, on='common_column', how='inner')
+
+markup_data = {'cut': ['Fair','Good','Very Good','Premium','Ideal'],'profit_margin':[1.1,1.15,1.2,1.25,1.3] } # 10% to 30% markup
+markup_df = pd.DataFrame(markup_data)
+
+merged_data = pd.merge(ideal_stones,markup_df,on='cut',how='inner')
+
+# check if there were matching errors
+print(merged_data[merged_data['profit_margin'].isnull()])
+
+
+# Using Requests Library
